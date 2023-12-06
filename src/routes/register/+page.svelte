@@ -1,60 +1,36 @@
-<script lang="ts">
+<script>
     import { initializeApp } from "firebase/app";
     import {
+        createUserWithEmailAndPassword,
         getAuth,
-        onAuthStateChanged,
-        sendPasswordResetEmail,
-        signInWithEmailAndPassword,
-        signOut,
-        type User,
     } from "firebase/auth";
-    import { onMount } from "svelte";
-    import { firebaseConfig } from "./key.js";
+    import { firebaseConfig } from "../key.js";
 
     let email = "";
     let password = "";
-    let loginError = "";
 
     // Initialize Firebase
-    export const app = initializeApp(firebaseConfig);
+    const app = initializeApp(firebaseConfig);
 
-    const login = () => {
+    const register = () => {
         const auth = getAuth(app);
-        signInWithEmailAndPassword(auth, email, password)
+        createUserWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
                 const user = userCredential.user;
-                window.location.href = "/home";
+                window.location.href = "/";
             })
             .catch((error) => {
                 const errorCode = error.code;
                 const errorMessage = error.message;
-                loginError = errorMessage;
                 console.log(errorCode, errorMessage);
             });
     };
-    export const logout = async () => {
-        const auth = getAuth(app);
-        signOut(auth);
-    };
-
-    const resetPassword = () => {
-        const auth = getAuth(app);
-        sendPasswordResetEmail(auth, email).then(() => {
-            // Password reset email sent!
-            // ..
-        })
-        .catch((error) => {
-            const errorCode = error.code;
-            const errorMessage = error.message;
-            console.log(errorCode, errorMessage);
-        });
-    }
-
-
-    const redirectToRegisterPage = () => {
-        window.location.href = "/register";
-    };
 </script>
+
+<svelte:head>
+    <title>Register</title>
+    <meta name="description" content="Register" />
+</svelte:head>
 
 <header>
     <nav class="bg-[#3730A3] p-4 fixed top-0 w-full z-10">
@@ -68,12 +44,11 @@
 <body class="bg-[#EEF5DB]">
     <div class="mt-28">
         <div class="h-full">
-            <h2 class="text-6xl text-center font-bold text-[#3730A3]">Login</h2>
+            <h2 class="text-6xl text-center font-bold text-[#3730A3]">
+                Register
+            </h2>
         </div>
     </div>
-
-    
-    
     <div class="flex items-center justify-center">
         <form
             class="mt-12 bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-1/4"
@@ -100,34 +75,20 @@
                     class="mt-4 border rounded-md border-[#3730A3] w-full py-2 px-3"
                     type="password"
                     id="password"
-                    placeholder="Password"
+                    placeholder="New Password"
                     bind:value={password}
                 />
             </div>
             <div class="text-center">
                 <button
-                    on:click={login}
-                    class=" mt-8 px-4 font-bold py-2 bg-[#3730A3] w-full text-white rounded-md hover:bg-[#DFC2F2] hover:text-[#3730A3]"
-                    >Login</button
-                >
-
-                <a
-                    class="font-bold text-sm text-[#3730A3] hover:text-[#DFC2F2]"
-                    href="/resetpassword"
-                >
-                    Forgot Password?
-                </a>
-                {#if loginError}
-                    <p>{loginError}</p>
-                {/if}
-                <button
-                    on:click={redirectToRegisterPage}
-                    class=" mt-8 px-4 font-bold py-2 w-full bg-[#3730A3] text-white rounded-md hover:bg-[#DFC2F2] hover:text-[#3730A3]"
-                >
-                    Register here</button
+                    on:click={register}
+                    class="mt-8 px-4 font-bold py-2 bg-[#3730A3] w-full text-white rounded-md hover:bg-[#DFC2F2] hover:text-[#3730A3]"
+                    >Register</button
                 >
             </div>
         </form>
     </div>
-    
 </body>
+
+<style>
+</style>
